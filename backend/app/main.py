@@ -1,10 +1,11 @@
+import json
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .database import Base, SessionLocal, engine
@@ -44,5 +45,14 @@ if FRONTEND_DIST.is_dir():
 
         requested_file = (FRONTEND_DIST / path).resolve()
         if requested_file.is_relative_to(FRONTEND_DIST.resolve()) and requested_file.is_file():
+            if requested_file.name == "index.html":
+                return frontend_index_response(requested_file)
             return FileResponse(requested_file)
-        return FileResponse(FRONTEND_DIST / "index.html")
+        return frontend_index_response(FRONTEND_DIST / "index.html")
+
+
+def frontend_index_response(index_file: Path) -> HTMLResponse:
+    token = json.dumps(os.getenv("HAPA_CLOUDFLARE_TOKEN", ""))
+    html = index_file.read_text(encoding="utf-8")
+    html = html.replace(json.dumps("__HAPA_CLOUDFLARE_TOKEN__"), token)
+    return HTMLResponse(content=html)

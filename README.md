@@ -67,7 +67,10 @@ The project includes a `Dockerfile` that builds the React website and serves it 
    - `HAPA_SECRET_KEY` — a long, randomly generated secret
    - `HAPA_ENVIRONMENT` — `production`
    - `HAPA_COOKIE_SECURE` — `true`
+   - `HAPA_CLOUDFLARE_TOKEN` — the token from your Cloudflare Web Analytics snippet
 5. Deploy, then open the service URL. The health endpoint is `/api/health`.
+
+To create the analytics token, add your deployed hostname in **Web Analytics** in Cloudflare, then copy the token value from its JavaScript snippet. Add it to Render as `HAPA_CLOUDFLARE_TOKEN` and redeploy. The dashboard will start collecting visits after the snippet is active.
 
 Keep database URLs and secret keys private. Do not commit them to GitHub. Review your hosting providers’ current limits and costs before choosing a plan.
 
