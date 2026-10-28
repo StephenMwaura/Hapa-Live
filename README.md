@@ -29,8 +29,8 @@ Listings are starter examples, so check the linked event page for the latest dat
 
 Project structure
 hapa-live/
-├── frontend/   React and TypeScript website
-└── backend/    FastAPI service and database
+frontend/   React and TypeScript website
+backend/    FastAPI service and database
 A good place to start exploring is frontend/src/pages/Home.tsx for the event discovery page and backend/app/routes.py for the API routes.
 
 Event images and links
