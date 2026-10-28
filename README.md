@@ -1,103 +1,41 @@
 # Hapa Live
 
-A full-stack starter for discovering live music around Kenya. The web app uses **React + TypeScript + Vite**. The API uses **Python + FastAPI + SQLAlchemy** with SQLite for local development. SQLite is simple to run locally; PostgreSQL is a straightforward next step when deploying for multiple users.
+**Discover live music and upcoming events around Kenya.**
 
-## What is in this version
+Hapa Live is a full-stack project for finding concerts, opening the organiser’s ticket page, and keeping track of events you want to attend.
 
-- **Home page:** colorful event discovery, search, city filter, date sorting, dark and light themes, and direct links to organiser or ticket pages.
-- **Sign up and login:** password validation, Argon2 password hashing, and a seven-day HttpOnly session cookie.
-- **My plans:** account-specific wishlists and a personal record of bookings.
-- **Booking record:** after paying on the event organiser’s website, a signed-in user can mark an event as booked and save ticket quantity plus a personal note. This is a reminder only: Hapa Live does not process payments or verify tickets.
-- **Sample concerts:** a small starter set sourced from published event pages. The seed script adds new examples and refreshes the sample event details when the API starts.
-- **Event artwork:** event cards use a poster or photo from the event/ticket page when one is available, with a genre image as a fallback. These images load from the source site, so they need an internet connection; check image reuse terms before a public launch.
+> Hapa Live helps you discover events. Ticket purchases happen on the organiser’s or ticket seller’s website.
 
-## Run locally (Windows PowerShell)
+## Features
 
-Open two terminals from this folder.
+- Browse and search event listings
+- Filter events by city
+- Switch between light and dark themes
+- Open the organiser’s or ticket seller’s page for event details and tickets
+- Create an account and save events to a wishlist
+- Keep personal booking notes in **My Plans**
 
-### Terminal 1: Python API
+Listings are starter examples, so check the linked event page for the latest dates, venues, and ticket details. Hapa Live does not process payments or verify tickets.
 
-```powershell
-cd backend
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-$env:HAPA_SECRET_KEY = 'replace-with-a-long-random-local-secret'
-uvicorn app.main:app --reload --port 8000
-```
+## Technology
 
-The API is at `http://127.0.0.1:8000`; interactive endpoint docs are at `http://127.0.0.1:8000/docs`. The SQLite file `hapa_live.db` is created in `backend/` the first time the API runs.
+- **Frontend:** React, TypeScript, and Vite
+- **Backend:** Python, FastAPI, and SQLAlchemy
+- **Database:** SQLite for local development
 
-### Terminal 2: React app
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
 
-Open the local address Vite prints (usually `http://localhost:5173`). Vite forwards `/api` requests to the Python API.
 
-## Publish this project on GitHub
 
-This folder is the complete source project. After creating an empty repository on GitHub, connect and push it from this folder:
-
-```powershell
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-git push -u origin main
-```
-
-The `.gitignore` keeps local dependencies, build output, environment secrets, and the SQLite database out of the repository. Do not commit real passwords or secret keys.
-
-## Learn the code in this order
-
-1. `frontend/src/types.ts` — the shared shape of a user, event, and booking.
-2. `frontend/src/pages/Home.tsx` — event search, city filtering, and the wishlist interaction.
-3. `frontend/src/components/EventCard.tsx` — the reusable concert card and organiser link.
-4. `frontend/src/pages/Auth.tsx` — signup and login forms.
-5. `frontend/src/pages/Dashboard.tsx` — the signed-in wishlist and booking record.
-6. `frontend/src/api.ts` — browser requests to the API, including cookie credentials.
-7. `backend/app/models.py` — database tables and links between users, events, wishlists, and booking records.
-8. `backend/app/routes.py` — the API actions; account-only routes get the user from the signed session cookie.
-9. `frontend/src/styles.css` — layout, responsive rules, and light/dark color tokens.
-
-A good first customization is adding a county or city to the seed data, then tracing it through the database model, TypeScript type, and city filter.
-
-## Pair-programming path
-
-- **You pick the product detail.** For example: which counties, genres, ticket details, or accessibility information would help someone choose an event?
-- **Trace one feature end to end.** We can add a county filter together by changing the event model, seed, API response, frontend type, and home-page control.
-- **You make the next edit.** I can explain the relevant files, suggest a small change, and review what you add before we move on.
-- **Keep the boundaries clear.** Organisers own checkout and tickets; Hapa Live owns discovery, wishlists, and the user’s personal plans.
-
-## Security and deployment notes
-
-This is a learning starter, not a production authentication service. Before deployment, use a long random `HAPA_SECRET_KEY`, HTTPS, `HAPA_COOKIE_SECURE=true`, PostgreSQL, schema migrations, email verification, password reset, login rate limiting, and a reviewable event-import workflow. Keep event sources and ticket links visible, recheck listings, and respect each source’s terms. Never scrape a site that disallows it.
-
-## Project layout
-
-```text
+Project structure
 hapa-live/
-├── frontend/                 React + TypeScript UI
-│   └── src/
-│       ├── App.tsx           Routes and sign-in gate
-│       ├── pages/            Home, authentication, and My Plans screens
-│       ├── components/       Shared navigation, event cards, and dialogs
-│       ├── api.ts            Typed API requests
-│       ├── auth.tsx          Current account state
-│       ├── styles.css        Colors, components, responsive layout
-│       └── types.ts          Frontend data types
-└── backend/                  FastAPI service
-    └── app/
-        ├── main.py           App startup and database seeding
-        ├── models.py         SQLAlchemy tables
-        ├── routes.py         Auth, events, wishlist, bookings
-        ├── schemas.py        Request and response validation
-        ├── security.py       Password hashes and signed sessions
-        └── seed.py           Starter event listings
-```
+├── frontend/   React and TypeScript website
+└── backend/    FastAPI service and database
+A good place to start exploring is frontend/src/pages/Home.tsx for the event discovery page and backend/app/routes.py for the API routes.
 
-## Event data note
+Event images and links
+Event links take users to the organiser or ticket seller. Event images load from their source websites when available and require an internet connection. 
 
-The starter seed includes a small set of sample listings. Regional examples were checked against their linked event pages on 28 October 2026; organisers can change dates, venues, and prices, so open the source link before making plans. The Mombasa entry links to the live SoldOutAfrica calendar because its current listing is on that calendar.
 
+Project status
+Hapa Live is a learning project under active development. The event listings are examples and may change. Before using the project publicly, review the authentication and deployment setup, and keep secret keys out of GitHub.
