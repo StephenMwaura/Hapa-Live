@@ -1,8 +1,11 @@
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from .database import Base, SessionLocal, engine
 from .routes import router
@@ -26,3 +29,20 @@ app.include_router(router)
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "hapa-live-api"}
+
+# In production, serve Vite's built files from the same host as the API.
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+if FRONTEND_DIST.is_dir():
+    assets_dir = FRONTEND_DIST / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend-assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def serve_frontend(path: str):
+        if path == "api" or path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Not found")
+
+        requested_file = (FRONTEND_DIST / path).resolve()
+        if requested_file.is_relative_to(FRONTEND_DIST.resolve()) and requested_file.is_file():
+            return FileResponse(requested_file)
+        return FileResponse(FRONTEND_DIST / "index.html")
